@@ -6,6 +6,19 @@ use std::{
     time::{Duration, SystemTime},
 };
 
+const HELP: &str = r#"
+crs - command line file watcher
+
+Usage: crs <file> <command> [args...]
+
+crs is a command line filewatcher which runs the specified
+<command> with the provided [args...] whenever a modification
+of the file is detected.
+
+Example:
+    crs src/main.rs cargo test
+"#;
+
 struct WatchedFile {
     path: String,
     modified: SystemTime,
@@ -33,13 +46,10 @@ impl WatchedFile {
 fn main() -> std::io::Result<()> {
     let argv: Vec<String> = env::args().collect();
     if argv.len() < 4 {
-        println!(
-            "Not enough args provided, expected at least 4 got {}",
-            argv.len()
-        );
+        println!("{}", HELP);
         return Err(std::io::Error::new(
             ErrorKind::InvalidInput,
-            "Not enough args",
+            format!("Not enough args. Expected 4. Found {}", argv.len()),
         ));
     };
     let fname = &argv[1];
